@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import type { StaticImageData } from "next/image";
+import { useRouter } from "next/router"; // Import useRouter for dynamic params
 import product1 from "../../../components/assests/s1.png";
 import product2 from "../../../components/assests/s2.png";
 import product3 from "../../../components/assests/s3.png";
@@ -59,23 +60,21 @@ const productImages: { [key: string]: StaticImageData } = {
   "21": product21,
 };
 
-interface PageProps {
-  params: {
-    products: string;
-  };
-}
-
-const Page = ({ params }: PageProps) => {
+const Page = () => {
   const [product, setProduct] = useState<Product | null>(null); // Use Product type instead of any
   const [addedToCart, setAddedToCart] = useState(false); // State for the add to cart button text
+  const router = useRouter();
+  const { products } = router.query; // Use `useRouter` to access dynamic params
 
   // Fetch the product data inside useEffect to avoid async/await directly in the component
   useEffect(() => {
+    if (!products) return; // Wait until `products` param is available
+
     const fetchProduct = async () => {
       try {
         // Fetch product data using the resolved 'products' param from the URL
         const fetchdata = await fetch(
-          `https://dummyjson.com/products/${params.products}`
+          `https://dummyjson.com/products/${products}`
         );
         const response = await fetchdata.json();
         setProduct(response); // Set product data in state
@@ -85,7 +84,7 @@ const Page = ({ params }: PageProps) => {
     };
 
     fetchProduct();
-  }, [params.products]); // Use 'params.products' as a dependency
+  }, [products]); // Use 'products' from router.query as a dependency
 
   // Check if product exists and fetch the image from productImages, fallback to product1
   const productImage = product && product.id ? productImages[String(product.id)] : product1;
