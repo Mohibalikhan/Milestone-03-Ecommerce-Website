@@ -63,6 +63,7 @@ const productImages: { [key: string]: StaticImageData } = {
 const Page = () => {
   const [product, setProduct] = useState<Product | null>(null); // Use Product type instead of any
   const [addedToCart, setAddedToCart] = useState(false); // State for the add to cart button text
+  const [loading, setLoading] = useState(true); // State for loading status
   const router = useRouter();
   const { products } = router.query; // Use `useRouter` to access dynamic params
 
@@ -75,14 +76,23 @@ const Page = () => {
 
     const fetchProduct = async () => {
       try {
-        // Fetch product data using the resolved 'products' param from the URL
+        setLoading(true); // Start loading
         const fetchdata = await fetch(
           `https://dummyjson.com/products/${products}`
         );
+
+        // Check if response is okay
+        if (!fetchdata.ok) {
+          throw new Error("Failed to fetch product data");
+        }
+
         const response = await fetchdata.json();
         setProduct(response); // Set product data in state
       } catch (error) {
         console.error("Failed to fetch product:", error);
+        setProduct(null); // Handle error by setting product to null
+      } finally {
+        setLoading(false); // End loading
       }
     };
 
@@ -102,9 +112,14 @@ const Page = () => {
     }, 2000);
   };
 
-  // If product data hasn't loaded yet, return a loading state
-  if (!product) {
+  // If loading or product data hasn't loaded yet, return a loading state
+  if (loading) {
     return <div>Loading...</div>;
+  }
+
+  // If product data is not available, show an error message
+  if (!product) {
+    return <div>Error: Product not found!</div>;
   }
 
   return (
