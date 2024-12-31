@@ -1,3 +1,4 @@
+"use client"; // This directive marks the component as client-side
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
@@ -58,32 +59,22 @@ const productImages: { [key: string]: StaticImageData } = {
   "21": product21,
 };
 
-const Page = ({ params }: { params: { products: string } }) => {
-  const [product, setProduct] = useState<Product | null>(null); // Use Product type instead of any
-  const [addedToCart, setAddedToCart] = useState(false); // State for the add to cart button text
+export async function getServerSideProps(context: { params: { products: string } }) {
+  const { products } = context.params; // Get the product id from params
 
-  // Fetch the product data inside useEffect to avoid async/await directly in the component
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        // Fetch product data using the resolved 'products' param
-        const fetchdata = await fetch(
-          `https://dummyjson.com/products/${params.products}`
-        );
-        const response = await fetchdata.json();
-        setProduct(response); // Set product data in state
-      } catch (error) {
-        console.error("Failed to fetch product:", error);
-      }
-    };
+  // Fetch product data using the product id
+  const fetchdata = await fetch(`https://dummyjson.com/products/${products}`);
+  const product = await fetchdata.json();
 
-    fetchProduct();
-  }, [params.products]); // Use 'params.products' as a dependency
+  return { props: { product } };
+}
+
+const Page = ({ product }: { product: Product }) => { // product is passed as a prop now
+  const [addedToCart, setAddedToCart] = useState(false);
 
   // Check if product exists and fetch the image from productImages, fallback to product1
-  const productImage = product && product.id ? productImages[String(product.id)] : product1;
+  const productImage = product.id ? productImages[String(product.id)] : product1;
 
-  // Handle the add to cart action
   const handleAddToCart = () => {
     setAddedToCart(true);
 
@@ -92,11 +83,6 @@ const Page = ({ params }: { params: { products: string } }) => {
       setAddedToCart(false);
     }, 2000);
   };
-
-  // If product data hasn't loaded yet, return a loading state
-  if (!product) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="bg-white py-6 sm:py-10">
@@ -141,5 +127,4 @@ const Page = ({ params }: { params: { products: string } }) => {
   );
 };
 
-// Default export the Page component
 export default Page;
