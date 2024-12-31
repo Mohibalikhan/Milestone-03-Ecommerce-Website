@@ -58,7 +58,7 @@ const productImages: { [key: string]: StaticImageData } = {
   "21": product21,
 };
 
-const Page = ({ params }: { params: { products: string } }) => {
+const Page = ({ params }: { params: { products: string } }) => { // Use { products: string } directly
   const [product, setProduct] = useState<Product | null>(null); // Use Product type instead of any
   const [addedToCart, setAddedToCart] = useState(false); // State for the add to cart button text
 
