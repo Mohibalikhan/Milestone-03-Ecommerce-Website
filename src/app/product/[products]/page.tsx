@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import type { StaticImageData } from "next/image";
-import { useRouter } from "next/router"; // Import useRouter for dynamic params
+
+// Importing product images
 import product1 from "../../../components/assests/s1.png";
 import product2 from "../../../components/assests/s2.png";
 import product3 from "../../../components/assests/s3.png";
@@ -64,13 +65,19 @@ const Page = () => {
   const [product, setProduct] = useState<Product | null>(null); // Use Product type instead of any
   const [addedToCart, setAddedToCart] = useState(false); // State for the add to cart button text
   const [loading, setLoading] = useState(true); // State for loading status
-  const router = useRouter();
-  const { products } = router.query; // Use `useRouter` to access dynamic params
+  const [isClient, setIsClient] = useState(false); // State to check if client-side
+
+  const productId = 1; // Example product ID, you can replace this with a dynamic value
+
+  // We use useEffect to mark the component as client-side
+  useEffect(() => {
+    setIsClient(true); // Update state to indicate we are on the client-side
+  }, []);
 
   // Fetch the product data inside useEffect to avoid async/await directly in the component
   useEffect(() => {
-    if (!products) {
-      // If products param is not available, do not try to fetch data
+    if (!productId || !isClient) {
+      // If productId is not available or not client-side, do not try to fetch data
       return;
     }
 
@@ -78,7 +85,7 @@ const Page = () => {
       try {
         setLoading(true); // Start loading
         const fetchdata = await fetch(
-          `https://dummyjson.com/products/${products}`
+          `https://dummyjson.com/products/${productId}`
         );
 
         // Check if response is okay
@@ -97,7 +104,7 @@ const Page = () => {
     };
 
     fetchProduct();
-  }, [products]); // Only run when `products` changes
+  }, [productId, isClient]); // Only run when `productId` changes or client-side flag updates
 
   // Check if product exists and fetch the image from productImages, fallback to product1
   const productImage = product && product.id ? productImages[String(product.id)] : product1;
