@@ -24,6 +24,16 @@ import product19 from "../../../components/assests/s19.png";
 import product20 from "../../../components/assests/s20.png";
 import product21 from "../../../components/assests/s21.png";
 
+// Define the product type based on the data you expect from the API
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  image: string; // Adjust to match the API response
+}
+
 const productImages: { [key: string]: StaticImageData } = {
   "1": product1,
   "2": product2,
@@ -48,17 +58,7 @@ const productImages: { [key: string]: StaticImageData } = {
   "21": product21,
 };
 
-// Define the product type based on the data you expect from the API
-interface Product {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  category: string;
-  imageUrl: string;
-}
-
-const Page = ({ params }: { params: Promise<{ products: string }> }) => {
+const Page = ({ params }: { params: { products: string } }) => {
   const [product, setProduct] = useState<Product | null>(null); // Use Product type instead of any
   const [addedToCart, setAddedToCart] = useState(false); // State for the add to cart button text
 
@@ -66,9 +66,9 @@ const Page = ({ params }: { params: Promise<{ products: string }> }) => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const resolvedParams = await params; // Resolve the params Promise
+        // Fetch product data using the resolved 'products' param
         const fetchdata = await fetch(
-          `https://dummyjson.com/products/${resolvedParams.products}`
+          `https://dummyjson.com/products/${params.products}`
         );
         const response = await fetchdata.json();
         setProduct(response); // Set product data in state
@@ -78,9 +78,10 @@ const Page = ({ params }: { params: Promise<{ products: string }> }) => {
     };
 
     fetchProduct();
-  }, [params]);
+  }, [params.products]); // Use 'params.products' as a dependency
 
-  const productImage = productImages[product?.id] || product1;
+  // Check if product exists and fetch the image from productImages, fallback to product1
+  const productImage = product && product.id ? productImages[String(product.id)] : product1;
 
   // Handle the add to cart action
   const handleAddToCart = () => {
