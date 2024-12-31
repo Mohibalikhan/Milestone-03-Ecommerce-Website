@@ -48,9 +48,18 @@ const productImages: { [key: string]: StaticImageData } = {
   "21": product21,
 };
 
-// This is the actual page component
+// Define the product type based on the data you expect from the API
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  category: string;
+  imageUrl: string;
+}
+
 const Page = ({ params }: { params: Promise<{ products: string }> }) => {
-  const [product, setProduct] = useState<any>(null); // State to hold the fetched product data
+  const [product, setProduct] = useState<Product | null>(null); // Use Product type instead of any
   const [addedToCart, setAddedToCart] = useState(false); // State for the add to cart button text
 
   // Fetch the product data inside useEffect to avoid async/await directly in the component
