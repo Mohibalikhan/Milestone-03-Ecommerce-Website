@@ -1,9 +1,8 @@
 'use client'
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaAngleRight, FaCaretDown, FaCaretUp } from "react-icons/fa";
 import Image from "next/image";
-import { useState, useEffect } from "react";
 import product1 from '../../components/assests/s1.png'
 import product2 from '../../components/assests/s2.png'
 import product3 from '../../components/assests/s3.png'
@@ -26,16 +25,23 @@ import product19 from '../../components/assests/s19.png'
 import product20 from '../../components/assests/s20.png'
 import product21 from '../../components/assests/s21.png'
 
-const productImages = [product1, product2, product3, product4, product5, product6, product7, product8 ,product9 ,product10 ,product11 ,product12 ,product13 ,product14 ,product15 ,product16 ,product17 ,product18 ,product19 ,product20 ,product21
-];
+// Define the interface for the product
+interface Product {
+  id: number;
+  title: string;
+  category: string;
+  price: number;
+}
+
+const productImages = [product1, product2, product3, product4, product5, product6, product7, product8 ,product9 ,product10 ,product11 ,product12 ,product13 ,product14 ,product15 ,product16 ,product17 ,product18 ,product19 ,product20 ,product21];
 
 export default function Sale() {
   // State for managing the sidebar toggle in mobile view
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // State for product data
-  const [products, setProducts] = useState([]);
-  
+  // State for product data, now typed using the Product interface
+  const [products, setProducts] = useState<Product[]>([]); // Specify type as Product[]
+
   // Fetch product data on component mount
   useEffect(() => {
     const fetchData = async () => {
@@ -97,11 +103,11 @@ export default function Sale() {
         {/* Product Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
           {products.length > 0 ? (
-            products.map((item: any, index: number) => (
+            products.map((item, index) => (
               <div key={index} className="font-bold text-slate-600">
                 <Link href={`/product/${item.id}`} className="block">
                   {/* Using dynamic image URL */}
-                   <Image src={productImages[index % productImages.length]} alt={"shoes"} width={400} height={300} />
+                  <Image src={productImages[index % productImages.length]} alt={"shoes"} width={400} height={300} />
                   
                   <p className="mt-2">{item.title}</p>
                   <p>{item.category}</p>
