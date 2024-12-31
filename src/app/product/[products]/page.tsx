@@ -68,7 +68,10 @@ const Page = () => {
 
   // Fetch the product data inside useEffect to avoid async/await directly in the component
   useEffect(() => {
-    if (!products) return; // Wait until `products` param is available
+    if (!products) {
+      // If products param is not available, do not try to fetch data
+      return;
+    }
 
     const fetchProduct = async () => {
       try {
@@ -84,7 +87,7 @@ const Page = () => {
     };
 
     fetchProduct();
-  }, [products]); // Use 'products' from router.query as a dependency
+  }, [products]); // Only run when `products` changes
 
   // Check if product exists and fetch the image from productImages, fallback to product1
   const productImage = product && product.id ? productImages[String(product.id)] : product1;
