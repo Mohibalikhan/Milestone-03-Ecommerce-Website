@@ -25,7 +25,6 @@ import product19 from '../../../components/assests/s19.png';
 import product20 from '../../../components/assests/s20.png';
 import product21 from '../../../components/assests/s21.png';
 
-
 // Map for product images
 const productImages: { [key: string]: StaticImageData } = {
   '1': product1,
@@ -58,13 +57,15 @@ const productImages: { [key: string]: StaticImageData } = {
   '28': product7,
   '29': product8,
   '30': product9,
-
 };
 
-const Page = async ({ params }: { params: { products: string } }) => {
+const Page = async ({ params }: { params: Promise<{ products: string }> }) => {
   try {
+    const resolvedParams = await params; // Resolve the promise
+    const productId = resolvedParams.products;
+
     // Fetch product data
-    const fetchdata = await fetch(`https://dummyjson.com/products/${params.products}`);
+    const fetchdata = await fetch(`https://dummyjson.com/products/${productId}`);
     const response = await fetchdata.json();
 
     // Check if response contains valid data
@@ -73,58 +74,51 @@ const Page = async ({ params }: { params: { products: string } }) => {
     }
 
     // Get the corresponding image from the map
-    const productImage = productImages[params.products] || product1; // Fallback to product1 if not found
+    const productImage = productImages[productId] || product1; // Fallback to product1 if not found
 
     return (
       <>
-      <div>
-        
+        <div>
+          <div className="p-4 pb-5 gap-6 sm:p-10">
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:flex lg:flex-wrap justify-center items-center gap-6">
+              {/* Product Image */}
+              <div className="w-full lg:w-3/6 xl:w-1/4 flex justify-center items-center">
+                <Image
+                  src={productImage}
+                  width={350}
+                  height={50}
+                  alt="product image"
+                  className="bg-slate-200 h-96"
+                />
+              </div>
 
-        <div className="p-4 pb-5 gap-6 sm:p-10">
-  <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:flex lg:flex-wrap justify-center items-center gap-6">
-    {/* Product Image */}
-    <div className="w-full lg:w-3/6 xl:w-1/4 flex justify-center items-center">
-      <Image
-        src={productImage}
-        width={350}
-        height={50}
-        alt="product image"
-        className="bg-slate-200 h-96"
-      />
-    </div>
-
-    {/* Product Details */}
-    <div className="w-full lg:w-1/3 xl:w-1/2 flex flex-col items-start p-4 pb-5 gap-4 sm:p-10">
-      <p className="font-bold text-lg lg:text-xl">Product Id: {response.id}</p>
-      <h3 className="text-lg lg:text-xl">
-        <span className="font-bold">Title:</span> {response.title}
-      </h3>
-      <p className="text-lg lg:text-xl">
-        <span className="font-bold">Category:</span> {response.category}
-      </p>
-      <p className="text-lg lg:text-xl">
-        <span className="font-bold">Description:</span> {response.description}
-      </p>
-      <p className="text-lg lg:text-xl">
-        <span className="font-bold">Price:</span> ${response.price}
-      </p>
-      <p className="text-lg lg:text-xl">
-        <span className="font-bold">Brand:</span> {response.brand}
-      </p>
-      <Link
-        href="/cart"
-        className="bg-black text-white p-3 w-full sm:w-48 text-center rounded hover:bg-gray-800"
-      >
-        Add to Cart
-      </Link>
-    </div>
-  </div>
-</div>
-
-
-
-      
-      
+              {/* Product Details */}
+              <div className="w-full lg:w-1/3 xl:w-1/2 flex flex-col items-start p-4 pb-5 gap-4 sm:p-10">
+                <p className="font-bold text-lg lg:text-xl">Product Id: {response.id}</p>
+                <h3 className="text-lg lg:text-xl">
+                  <span className="font-bold">Title:</span> {response.title}
+                </h3>
+                <p className="text-lg lg:text-xl">
+                  <span className="font-bold">Category:</span> {response.category}
+                </p>
+                <p className="text-lg lg:text-xl">
+                  <span className="font-bold">Description:</span> {response.description}
+                </p>
+                <p className="text-lg lg:text-xl">
+                  <span className="font-bold">Price:</span> ${response.price}
+                </p>
+                <p className="text-lg lg:text-xl">
+                  <span className="font-bold">Brand:</span> {response.brand}
+                </p>
+                <Link
+                  href="/cart"
+                  className="bg-black text-white p-3 w-full sm:w-48 text-center rounded hover:bg-gray-800"
+                >
+                  Add to Cart
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </>
     );
