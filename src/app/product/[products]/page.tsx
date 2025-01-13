@@ -25,16 +25,6 @@ import product19 from "../../../../public/assests/s19.png";
 import product20 from "../../../../public/assests/s20.png";
 import product21 from "../../../../public/assests/s21.png";
 
-// Define the Product type
-interface Product {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  category: string;
-  brand: string;
-}
-
 const productImages: { [key: string]: StaticImageData } = {
   "1": product1,
   "2": product2,
@@ -61,10 +51,10 @@ const productImages: { [key: string]: StaticImageData } = {
 
 const Page = ({ params }: { params: Promise<{ products: string }> }) => {
   const { addToCart } = useCart();
-  const [product, setProduct] = useState<Product | null>(null); // Specify Product type
+  const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [productId, setProductId] = useState<string>(""); // productId will be a string
+  const [productId, setProductId] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
 
   useEffect(() => {
@@ -85,11 +75,10 @@ const Page = ({ params }: { params: Promise<{ products: string }> }) => {
         if (!response.ok) {
           throw new Error("Failed to fetch product data.");
         }
-        const data: Product = await response.json();
+        const data = await response.json();
         setProduct(data);
-      } catch (err) {
+      } catch {
         setError("Failed to fetch product data.");
-        console.error(err); // Log the error to avoid unused variable warning
       } finally {
         setLoading(false);
       }
@@ -98,22 +87,18 @@ const Page = ({ params }: { params: Promise<{ products: string }> }) => {
     fetchProductData();
   }, [productId]);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: any) => {
     addToCart(product);
     setSuccessMessage("Product added successfully!");
     setTimeout(() => {
-      setSuccessMessage(""); // Hide the success message after 2 seconds
+      setSuccessMessage(""); // Hide the message after 2 seconds
     }, 2000);
   };
 
   if (loading) return <div className="text-center py-10">Loading...</div>;
   if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
 
-  const productImage = productId && productImages[productId] ? productImages[productId] : product1; // Fallback to product1
-
-  if (!product) {
-    return <div className="text-center py-10 text-red-500">Product not found</div>;
-  }
+  const productImage = productId && productImages[productId] ? productImages[productId] : product1;
 
   return (
     <div className="container mx-auto p-4">
@@ -150,7 +135,7 @@ const Page = ({ params }: { params: Promise<{ products: string }> }) => {
 
           {/* Success Message */}
           {successMessage && (
-            <div className="text-center text-green-500 mt-4">{successMessage}</div>
+            <div className="text-center text-green-700 mt-4">{successMessage}</div>
           )}
         </div>
       </div>
