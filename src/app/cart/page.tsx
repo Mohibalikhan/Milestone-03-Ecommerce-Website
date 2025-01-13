@@ -1,105 +1,146 @@
-import Link from "next/link";
+"use client";
+import type { StaticImageData } from "next/image";
+import React from "react";
+import { useCart } from "../Context/CartContext";
+import Image from "next/image";
 
-export default function Bag() {
+import product1 from "../../../public/assests/s1.png";
+import product2 from "../../../public/assests/s2.png";
+import product3 from "../../../public/assests/s3.png";
+import product4 from "../../../public/assests/s4.png";
+import product5 from "../../../public/assests/s5.png";
+import product6 from "../../../public/assests/s6.png";
+import product7 from "../../../public/assests/s7.png";
+import product8 from "../../../public/assests/s8.png";
+import product9 from "../../../public/assests/s9.png";
+import product10 from "../../../public/assests/s10.png";
+import product11 from "../../../public/assests/s11.png";
+import product12 from "../../../public/assests/s12.png";
+import product13 from "../../../public/assests/s13.png";
+import product14 from "../../../public/assests/s14.png";
+import product15 from "../../../public/assests/s15.png";
+import product16 from "../../../public/assests/s16.png";
+import product17 from "../../../public/assests/s17.png";
+import product18 from "../../../public/assests/s18.png";
+import product19 from "../../../public/assests/s19.png";
+import product20 from "../../../public/assests/s20.png";
+import product21 from "../../../public/assests/s21.png";
+
+const productImages: { [key: string]: StaticImageData } = {
+  "1": product1,
+  "2": product2,
+  "3": product3,
+  "4": product4,
+  "5": product5,
+  "6": product6,
+  "7": product7,
+  "8": product8,
+  "9": product9,
+  "10": product10,
+  "11": product11,
+  "12": product12,
+  "13": product13,
+  "14": product14,
+  "15": product15,
+  "16": product16,
+  "17": product17,
+  "18": product18,
+  "19": product19,
+  "20": product20,
+  "21": product21,
+};
+
+const CartPage = () => {
+  const { cart, removeFromCart, updateQuantity } = useCart();
+
+  // Calculate total price
+  const totalPrice = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+
+  if (cart.length === 0) {
     return (
-      <div className="min-h-screen bg-[#FFFFFF]">
-        {/* Container */}
-        <div className="max-w-7xl mx-auto px-4 py-8  grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Bag Section */}
-          <div className="lg:col-span-2 bg-[#FFFFFF] p-6">
-            {/* Free Delivery Banner */}
-            <div className="bg-gray-300 p-4 mb-6 rounded-md text-sm">
-              <span>Free Delivery</span> applies to orders of ₹5,000 or more.{" "}
-              <a href="#" className="text-[#111111] underline">
-                View details
-              </a>
-            </div>
-  
-            {/* Bag Items */}
-            <h2 className="text-4xl font-bold mb-4">Bag</h2>
-            <div className="space-y-8">
-  {/* Item 1 */}
-  <div className="flex flex-wrap gap-4 sm:gap-6 md:flex-nowrap">
-    <img
-      src="Frame.png"
-      alt="Nike Shirt"
-      className="w-24 h-24 object-cover rounded-md border sm:w-32 sm:h-32"
-    />
-    <div className="flex-1">
-      <h3 className="font-semibold text-sm sm:text-base">
-        Nike Dri-FIT ADV TechKnit Ultra
-      </h3>
-      <p className="text-gray-500 text-xs sm:text-sm">
-        Men&apos;s Short-Sleeve Running Top
-        <br />
-        Ashen Slate/Cobalt Bliss
-      </p>
-      <p className="text-xs sm:text-sm">
-        <span className="font-bold">Size:</span> L
-        <span className="mx-2">|</span>
-        <span className="font-bold">Quantity:</span> 1
-      </p>
-      
-    </div>
-    <p className="font-bold text-sm sm:text-base">MRP: ₹ 3,895.00</p>
-  </div>
-
-  {/* Item 2 */}
-  <div className="flex flex-wrap gap-4 sm:gap-6 md:flex-nowrap">
-    <img
-      src="shoe.png"
-      alt="Nike Shoes"
-      className="w-24 h-24 object-cover rounded-md border sm:w-32 sm:h-32"
-    />
-    <div className="flex-1">
-      <h3 className="font-semibold text-sm sm:text-base">
-        Nike Air Max 97 SE
-      </h3>
-      <p className="text-gray-500 text-xs sm:text-sm">
-        Men&apos;s Shoes
-        <br />
-        Flat Pewter/Light Bone/Black/White
-      </p>
-      <p className="text-xs sm:text-sm">
-        <span className="font-bold">Size:</span> 8
-        <span className="mx-2">|</span>
-        <span className="font-bold">Quantity:</span> 1
-      </p>
-     
-    </div>
-    <p className="font-bold text-sm sm:text-base">MRP: ₹ 16,995.00</p>
-  </div>
-</div>
-</div>
-  
-          {/* Summary Section */}
-          <div className="bg-[#FFFFFF] p-6">
-            <h2 className="text-lg font-bold mb-6">Summary</h2>
-            <div className="space-y-4 text-sm">
-              <div className="flex justify-between">
-                <span>Subtotal:</span>
-                <span>₹ 20,890.00</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Estimated Delivery & Handling:</span>
-                <span>Free</span>
-              </div>
-            </div>
-            <hr className="my-4" />
-            <div className="flex justify-between text-lg font-bold">
-              <span>Total:</span>
-              <span>₹ 20,890.00</span>
-            </div>
-            <Link href={"/CheckOut"}>
-            <button className="w-full mt-6 bg-black text-white py-3 rounded-3xl font-medium">
-              Member Checkout
-            </button>
-            </Link>
-          </div>
-        </div>
-  
-      
+      <div className="flex justify-center items-center h-screen">
+        <h1 className="text-xl font-bold text-gray-600">Your cart is empty.</h1>
       </div>
     );
   }
-  
+
+  return (
+    <div className="max-w-7xl mx-auto p-4 space-y-6">
+      <h1 className="text-2xl font-bold text-center">Your Cart</h1>
+
+      {/* Cart Items */}
+      <div className="space-y-4">
+        {cart.map((item) => {
+          const productImage = productImages[item.id] || product1;
+
+          return (
+            <div
+              key={item.id}
+              className="flex flex-col sm:flex-row items-center border rounded-lg shadow-md overflow-hidden"
+            >
+              {/* Product Image */}
+              <div className="flex-shrink-0 w-full sm:w-40">
+                <Image
+                  src={productImage}
+                  layout="responsive"
+                  width={150}
+                  height={150}
+                  alt={item.title}
+                  className="object-cover"
+                />
+              </div>
+
+              {/* Product Details */}
+              <div className="flex-1 p-4 space-y-2">
+                <h2 className="text-lg font-bold truncate">{item.title}</h2>
+                <p className="text-gray-600">${item.price}</p>
+
+                {/* Quantity Controls */}
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    className="bg-gray-300 text-black px-3 py-1 rounded hover:bg-gray-400"
+                    disabled={item.quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <span>{item.quantity}</span>
+                  <button
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    className="bg-gray-300 text-black px-3 py-1 rounded hover:bg-gray-400"
+                  >
+                    +
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => removeFromCart(item.id)}
+                  className="bg-red-500 text-white px-4 py-2 mt-4 rounded hover:bg-red-700"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Total Payment Section */}
+      <div className="p-4 border rounded-lg shadow-md bg-gray-50 flex justify-between items-center">
+        <h2 className="text-lg font-bold">Total Payment:</h2>
+        <p className="text-xl font-bold text-green-600">${totalPrice.toFixed(2)}</p>
+        <button
+          onClick={() => cart.forEach((item) => removeFromCart(item.id))}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
+        >
+          Remove All
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default CartPage;

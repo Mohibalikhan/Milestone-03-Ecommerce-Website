@@ -1,131 +1,146 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import type { StaticImageData } from 'next/image'; // Import StaticImageData type
+"use client";
+import type { StaticImageData } from "next/image";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { useCart } from "../../Context/CartContext";
+import product1 from "../../../../public/assests/s1.png";
+import product2 from "../../../../public/assests/s2.png";
+import product3 from "../../../../public/assests/s3.png";
+import product4 from "../../../../public/assests/s4.png";
+import product5 from "../../../../public/assests/s5.png";
+import product6 from "../../../../public/assests/s6.png";
+import product7 from "../../../../public/assests/s7.png";
+import product8 from "../../../../public/assests/s8.png";
+import product9 from "../../../../public/assests/s9.png";
+import product10 from "../../../../public/assests/s10.png";
+import product11 from "../../../../public/assests/s11.png";
+import product12 from "../../../../public/assests/s12.png";
+import product13 from "../../../../public/assests/s13.png";
+import product14 from "../../../../public/assests/s14.png";
+import product15 from "../../../../public/assests/s15.png";
+import product16 from "../../../../public/assests/s16.png";
+import product17 from "../../../../public/assests/s17.png";
+import product18 from "../../../../public/assests/s18.png";
+import product19 from "../../../../public/assests/s19.png";
+import product20 from "../../../../public/assests/s20.png";
+import product21 from "../../../../public/assests/s21.png";
 
-// Static images import
-import product1 from '../../../components/assests/s1.png';
-import product2 from '../../../components/assests/s2.png';
-import product3 from '../../../components/assests/s3.png';
-import product4 from '../../../components/assests/s4.png';
-import product5 from '../../../components/assests/s5.png';
-import product6 from '../../../components/assests/s6.png';
-import product7 from '../../../components/assests/s7.png';
-import product8 from '../../../components/assests/s8.png';
-import product9 from '../../../components/assests/s9.png';
-import product10 from '../../../components/assests/s10.png';
-import product11 from '../../../components/assests/s11.png';
-import product12 from '../../../components/assests/s12.png';
-import product13 from '../../../components/assests/s13.png';
-import product14 from '../../../components/assests/s14.png';
-import product15 from '../../../components/assests/s15.png';
-import product16 from '../../../components/assests/s16.png';
-import product17 from '../../../components/assests/s17.png';
-import product18 from '../../../components/assests/s18.png';
-import product19 from '../../../components/assests/s19.png';
-import product20 from '../../../components/assests/s20.png';
-import product21 from '../../../components/assests/s21.png';
-
-// Map for product images
 const productImages: { [key: string]: StaticImageData } = {
-  '1': product1,
-  '2': product2,
-  '3': product3,
-  '4': product4,
-  '5': product5,
-  '6': product6,
-  '7': product7,
-  '8': product8,
-  '9': product9,
-  '10': product10,
-  '11': product11,
-  '12': product12,
-  '13': product13,
-  '14': product14,
-  '15': product15,
-  '16': product16,
-  '17': product17,
-  '18': product18,
-  '19': product19,
-  '20': product20,
-  '21': product21,
-  '22': product1,
-  '23': product2,
-  '24': product3,
-  '25': product4,
-  '26': product5,
-  '27': product6,
-  '28': product7,
-  '29': product8,
-  '30': product9,
+  "1": product1,
+  "2": product2,
+  "3": product3,
+  "4": product4,
+  "5": product5,
+  "6": product6,
+  "7": product7,
+  "8": product8,
+  "9": product9,
+  "10": product10,
+  "11": product11,
+  "12": product12,
+  "13": product13,
+  "14": product14,
+  "15": product15,
+  "16": product16,
+  "17": product17,
+  "18": product18,
+  "19": product19,
+  "20": product20,
+  "21": product21,
 };
 
-const Page = async ({ params }: { params: Promise<{ products: string }> }) => {
-  try {
-    const resolvedParams = await params; // Resolve the promise
-    const productId = resolvedParams.products;
+const Page = ({ params }: { params: Promise<{ products: string }> }) => {
+  const { addToCart } = useCart();
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [productId, setProductId] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
-    // Fetch product data
-    const fetchdata = await fetch(`https://dummyjson.com/products/${productId}`);
-    const response = await fetchdata.json();
+  useEffect(() => {
+    const unwrapParams = async () => {
+      const resolvedParams = await params;
+      setProductId(resolvedParams.products);
+    };
 
-    // Check if response contains valid data
-    if (!response || response.error) {
-      return <div>Product not found.</div>;
-    }
+    unwrapParams();
+  }, [params]);
 
-    // Get the corresponding image from the map
-    const productImage = productImages[productId] || product1; // Fallback to product1 if not found
+  useEffect(() => {
+    const fetchProductData = async () => {
+      if (!productId) return;
 
-    return (
-      <>
-        <div>
-          <div className="p-4 pb-5 gap-6 sm:p-10">
-            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:flex lg:flex-wrap justify-center items-center gap-6">
-              {/* Product Image */}
-              <div className="w-full lg:w-3/6 xl:w-1/4 flex justify-center items-center">
-                <Image
-                  src={productImage}
-                  width={350}
-                  height={50}
-                  alt="product image"
-                  className="bg-slate-200 h-96"
-                />
-              </div>
+      try {
+        const response = await fetch(`https://dummyjson.com/products/${productId}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch product data.");
+        }
+        const data = await response.json();
+        setProduct(data);
+      } catch (err) {
+        setError("Failed to fetch product data.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-              {/* Product Details */}
-              <div className="w-full lg:w-1/3 xl:w-1/2 flex flex-col items-start p-4 pb-5 gap-4 sm:p-10">
-                <p className="font-bold text-lg lg:text-xl">Product Id: {response.id}</p>
-                <h3 className="text-lg lg:text-xl">
-                  <span className="font-bold">Title:</span> {response.title}
-                </h3>
-                <p className="text-lg lg:text-xl">
-                  <span className="font-bold">Category:</span> {response.category}
-                </p>
-                <p className="text-lg lg:text-xl">
-                  <span className="font-bold">Description:</span> {response.description}
-                </p>
-                <p className="text-lg lg:text-xl">
-                  <span className="font-bold">Price:</span> ${response.price}
-                </p>
-                <p className="text-lg lg:text-xl">
-                  <span className="font-bold">Brand:</span> {response.brand}
-                </p>
-                <Link
-                  href="/cart"
-                  className="bg-black text-white p-3 w-full sm:w-48 text-center rounded hover:bg-gray-800"
-                >
-                  Add to Cart
-                </Link>
-              </div>
-            </div>
-          </div>
+    fetchProductData();
+  }, [productId]);
+
+  const handleAddToCart = (product: any) => {
+    addToCart(product);
+    setSuccessMessage("Product added successfully!");
+    setTimeout(() => {
+      setSuccessMessage("");
+    }, 2000); // Hide the message after 2 seconds
+  };
+
+  if (loading) return <div className="text-center py-10">Loading...</div>;
+  if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
+
+  const productImage = productId && productImages[productId] ? productImages[productId] : product1;
+
+  return (
+    <div className="container mx-auto p-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        {/* Product Image */}
+        <div className="flex justify-center">
+          <Image
+            src={productImage}
+            width={400}
+            height={400}
+            alt="Product Image"
+            className="rounded-lg shadow-lg"
+          />
         </div>
-      </>
-    );
-  } catch (error) {
-    console.error('Error fetching product:', error);
-    return <div>Failed to load product data. Please try again later.</div>;
-  }
+
+        {/* Product Details */}
+        <div className="flex flex-col gap-6">
+          <h1 className="text-2xl font-bold">{product.title}</h1>
+          <p className="text-gray-600">{product.description}</p>
+          <p className="text-xl font-semibold">Price: ${product.price}</p>
+          <p className="text-gray-500">
+            <span className="font-bold">Category:</span> {product.category}
+          </p>
+          <p className="text-gray-500">
+            <span className="font-bold">Brand:</span> {product.brand}
+          </p>
+
+          <button
+            onClick={() => handleAddToCart(product)}
+            className="bg-black text-white py-3 px-6 rounded-lg hover:bg-gray-800 transition-all"
+          >
+            Add to Cart
+          </button>
+
+          {/* Success Message */}
+          {successMessage && (
+            <div className="text-center text-green-700 mt-4">{successMessage}</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Page;
